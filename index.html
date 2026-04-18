@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPHUB | 특허경영 오케스트레이션</title>
+    <!-- 폰트: 가독성이 높고 전문적인 느낌을 주는 Noto Sans KR -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- 아이콘: Lucide 아이콘 라이브러리 (CDN) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* [1] CSS 변수 선언: 유지보수성과 일관성을 위한 디자인 시스템 적용 */
+        :root {
+            --primary-color: #007BFF;
+            --primary-hover: #0056b3;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --bg-light: #F8F9FA;
+            --white: #FFFFFF;
+            --border-color: #E9ECEF;
+            --transition-speed: 0.3s;
+        }
+
+        /* [2] 전역 스타일 및 초기화 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth; /* 부드러운 스크롤 이동 */
+            font-family: 'Noto Sans KR', sans-serif;
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        body {
+            background-color: var(--white);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        section {
+            padding: 100px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            color: var(--text-main);
+        }
+
+        /* 버튼 컴포넌트 */
+        .btn-primary {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 15px 30px;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* [3] Header (헤더) */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: all var(--transition-speed);
+            padding: 20px 0;
+            background-color: transparent;
+        }
+
+        header.scrolled {
+            background-color: var(--white);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 15px 0;
+        }
+
+        header.scrolled .nav-links a {
+            color: var(--text-main);
+        }
+
+        header.scrolled .logo {
+            color: var(--primary-color);
+        }
+
+        .nav-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
+            transition: color var(--transition-speed);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            color: var(--white);
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        /* 모바일 메뉴 버튼 (숨김 처리) */
+        .mobile-menu-btn {
+            display: none;
+            color: var(--text-main);
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* [4] Hero Section (메인) */
+        .hero {
+            height: 100vh;
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            /* 명도 조절을 위한 그라디언트 오버레이 적용 */
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), 
+                        url('https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+            color: var(--white);
+            padding-top: 80px; /* 헤더 공간 보상 */
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            font-weight: 300;
+            margin-bottom: 40px;
+            color: #E0E0E0;
+        }
+
+        /* [5] About Us (소개) */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .about-text h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .about-text p {
+            margin-bottom: 15px;
+            color: var(--text-muted);
+        }
+
+        .expert-card {
+            background-color: var(--bg-light);
+            padding: 40px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .expert-icon {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .expert-card h4 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+        }
+
+        .expert-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* [6] Products (제품/솔루션) */
+        .products {
+            background-color: var(--bg-light);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .product-card {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+            border-top: 4px solid transparent;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border-top-color: var(--primary-color);
+        }
+
+        .product-icon {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .product-card h4 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .product-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* [7] Services (서비스 프로세스) */
+        .process-wrapper {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-top: 40px;
+        }
+
+        /* 가로 진행선 (Progress Line) */
+        .process-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 40px;
+            left: 5%;
+            width: 90%;
+            height: 2px;
+            background-color: var(--border-color);
+            z-index: 1;
+        }
+
+        .process-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            padding: 0 10px;
+        }
+
+        .step-number {
+            width: 80px;
+            height: 80px;
+            background-color: var(--white);
+            border: 2px solid var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .process-step:hover .step-number {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+
+        .process-step h4 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .process-step p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* [8] Booking & Location */
+        .booking {
+            background-color: var(--bg-light);
+        }
+
+        .booking-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+        }
+
+        .booking-form {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color var(--transition-speed);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-message {
+            display: none;
+            padding: 15px;
+            background-color: #d4edda;
+            color: #155724;
+            border-radius: 4px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .location-info {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .map-container {
+            width: 100%;
+            height: 300px;
+            background-color: #e9ecef;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+        }
+
+        /* 실제 배포 시에는 아래 iframe의 src 속성을 Google Maps 임베드 링크로 변경하세요 */
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .contact-details {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .contact-item i {
+            color: var(--primary-color);
+            margin-right: 15px;
+            margin-top: 3px;
+        }
+
+        /* [9] Footer */
+        footer {
+            background-color: var(--text-main);
+            color: var(--white);
+            padding: 50px 0 20px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #444;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            color: #ccc;
+            font-size: 0.9rem;
+            transition: color var(--transition-speed);
+        }
+
+        .footer-links a:hover {
+            color: var(--white);
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-icons a {
+            color: #ccc;
+            transition: color var(--transition-speed);
+        }
+
+        .social-icons a:hover {
+            color: var(--white);
+        }
+
+        .copyright {
+            text-align: center;
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        /* [10] 반응형 디자인 (Media Queries) */
+        @media (max-width: 992px) {
+            .hero-title { font-size: 2.5rem; }
+            .about-grid, .booking-grid { grid-template-columns: 1fr; }
+            .process-wrapper { flex-direction: column; gap: 30px; }
+            .process-wrapper::before { display: none; }
+            .process-step { display: flex; text-align: left; align-items: center; gap: 20px; }
+            .step-number { margin: 0; width: 60px; height: 60px; flex-shrink: 0; font-size: 1.2rem; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none; /* 모바일에서는 내비게이션 링크 숨김 (햄버거 메뉴로 대체 가능) */
+            }
+            .mobile-menu-btn {
+                display: block;
+                color: var(--white);
+            }
+            header.scrolled .mobile-menu-btn {
+                color: var(--text-main);
+            }
+            .hero-title { font-size: 2rem; }
+            .footer-content { flex-direction: column; gap: 20px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header 영역 -->
+    <header id="header">
+        <div class="container nav-wrapper">
+            <a href="#" class="logo">IP Hub</a>
+            <nav class="nav-links">
+                <a href="#about">About Us</a>
+                <a href="#products">Products</a>
+                <a href="#services">Services</a>
+                <a href="#booking">Booking</a>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="메뉴 열기">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container hero-content">
+            <h1 class="hero-title">스타트업의 비즈니스를 지키고 키우는<br>특허경영 오케스트레이션</h1>
+            <p class="hero-subtitle">파편화된 지식재산을 하나의 강력한 포트폴리오로 지휘합니다.</p>
+            <a href="#booking" class="btn-primary">전문가와 1:1 상담 예약하기</a>
+        </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section id="about" class="container">
+        <div class="about-grid">
+            <div class="about-text">
+                <h2 class="section-title" style="text-align: left;">Why IPHUB?</h2>
+                <h3>비즈니스 전략과 결합된 특허 컨설팅</h3>
+                <p>단순한 특허등록을 넘어, 스타트업의 핵심 기술을 보호하고 경쟁사와의 격차를 벌리는 '특허경영'을 지향합니다.</p>
+                <p>우리는 고객의 비즈니스 모델을 완벽히 이해하고, 이를 방어할 수 있는 최적의 지식재산 포트폴리오를 설계합니다. 단순한 방패가 아닌 시장을 개척하는 창으로서의 특허를 제공합니다.</p>
+            </div>
+            <div class="expert-card">
+                <i data-lucide="award" class="expert-icon" width="48" height="48"></i>
+                <h4>최고의 특허 전문가 그룹</h4>
+                <p>10년 이상의 기술 트렌드 분석 및 스타트업 전담 컨설팅 경험을 보유한 변리사 및 기술 가치 평가 전문가들이 귀사의 비즈니스를 보호합니다.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="products">
+        <div class="container">
+            <h2 class="section-title">Products & Solutions</h2>
+            <div class="products-grid">
+                <!-- 카드 1 -->
+                <div class="product-card">
+                    <i data-lucide="git-branch" class="product-icon" width="32" height="32"></i>
+                    <h4>특허경영 오케스트레이션</h4>
+                    <p>파편화된 특허 자산을 비즈니스 목표에 맞게 통합하고 지휘하는 통합 컨설팅 솔루션입니다.</p>
+                </div>
+                <!-- 카드 2 -->
+                <div class="product-card">
+                    <i data-lucide="book-open" class="product-icon" width="32" height="32"></i>
+                    <h4>특허교육</h4>
+                    <p>임직원의 지식재산권 인식 제고 및 직무발명 활성화를 위한 맞춤형 사내 교육을 제공합니다.</p>
+                </div>
+                <!-- 카드 3 -->
+                <div class="product-card">
+                    <i data-lucide="users" class="product-icon" width="32" height="32"></i>
+                    <h4>지식재산포럼</h4>
+                    <p>최신 기술 동향과 IP 이슈를 공유하고, 업계 네트워크를 형성하는 정기 포럼을 개최합니다.</p>
+                </div>
+                <!-- 카드 4 -->
+                <div class="product-card">
+                    <i data-lucide="briefcase" class="product-icon" width="32" height="32"></i>
+                    <h4>특허컨설팅</h4>
+                    <p>기업의 기술력과 비즈니스 상황에 최적화된 맞춤형 특허 출원 및 등록 전략을 수립합니다.</p>
+                </div>
+                <!-- 카드 5 -->
+                <div class="product-card">
+                    <i data-lucide="shield-check" class="product-icon" width="32" height="32"></i>
+                    <h4>FTO (침해 예방 조사)</h4>
+                    <p>신제품 출시 전 타인의 특허 침해 리스크를 분석하여 안정적인 사업 추진을 지원합니다.</p>
+                </div>
+                <!-- 카드 6 -->
+                <div class="product-card">
+                    <i data-lucide="search" class="product-icon" width="32" height="32"></i>
+                    <h4>선행기술검토</h4>
+                    <p>연구개발 초기 단계에 기존 기술을 철저히 분석하여 중복 투자를 방지하고 우회 전략을 제시합니다.</p>
+                </div>
+                <!-- 카드 7 -->
+                <div class="product-card">
+                    <i data-lucide="trending-up" class="product-icon" width="32" height="32"></i>
+                    <h4>기술트렌드분석</h4>
+                    <p>경쟁사의 특허 출원 동향을 분석하여 향후 기술 발전 방향을 예측하고 R&D 로드맵을 제안합니다.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="container">
+        <h2 class="section-title">고객 맞춤형 피팅 서비스 프로세스</h2>
+        <div class="process-wrapper">
+            <div class="process-step">
+                <div class="step-number">01</div>
+                <h4>현황 진단</h4>
+                <p>기업의 보유 기술과 시장 경쟁력을 정밀하게 분석합니다.</p>
+            </div>
+            <div class="process-step">
+                <div class="step-number">02</div>
+                <h4>전략 수립</h4>
+                <p>비즈니스 로드맵에 부합하는 IP 확보 전략을 기획합니다.</p>
+            </div>
+            <div class="process-step">
+                <div class="step-number">03</div>
+                <h4>포트폴리오 구축</h4>
+                <p>핵심 특허 출원 및 권리망을 촘촘하게 설계합니다.</p>
+            </div>
+            <div class="process-step">
+                <div class="step-number">04</div>
+                <h4>지속적 모니터링</h4>
+                <p>경쟁사 동향을 감시하고 포트폴리오를 지속 업데이트합니다.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking & Location Section -->
+    <section id="booking" class="booking">
+        <div class="container">
+            <h2 class="section-title">1:1 상담 예약 및 오시는 길</h2>
+            <div class="booking-grid">
+                <!-- 폼 영역 -->
+                <div class="booking-form">
+                    <form id="consultationForm">
+                        <div class="form-group">
+                            <label for="name">담당자 성함</label>
+                            <input type="text" id="name" required placeholder="홍길동">
+                        </div>
+                        <div class="form-group">
+                            <label for="company">회사명</label>
+                            <input type="text" id="company" required placeholder="(주)스타트업">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">이메일 주소</label>
+                            <input type="email" id="email" required placeholder="example@company.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="message">문의 내용 (선택)</label>
+                            <textarea id="message" rows="4" placeholder="상담받고 싶으신 내용을 간략히 적어주세요."></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary" style="width: 100%;">상담 예약 제출하기</button>
+                    </form>
+                    <!-- 제출 성공 메시지 영역 (JavaScript로 제어) -->
+                    <div id="successMessage" class="form-message">
+                        상담 예약이 성공적으로 접수되었습니다. 담당자가 곧 연락드리겠습니다.
+                    </div>
+                </div>
+
+                <!-- 지도 및 연락처 영역 -->
+                <div class="location-info">
+                    <div class="map-container">
+                        <!-- 실제 서비스에서는 구글맵 또는 카카오맵 iframe 삽입 -->
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3162.271343729909!2d127.0315907156475!3d37.49811563155776!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x357ca15967b5e82b%3A0x60fc6b29d91834e2!2sGangnam-gu%2C%20Seoul!5e0!3m2!1sen!2skr!4v1621234567890!5m2!1sen!2skr" allowfullscreen="" loading="lazy"></iframe>
+                    </div>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <i data-lucide="map-pin"></i>
+                            <div>
+                                <strong>오시는 길</strong><br>
+                                <span style="color: var(--text-muted); font-size: 0.9rem;">서울특별시 강남구 테헤란로625, 덕명빌딩 17층</span>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i data-lucide="phone"></i>
+                            <div>
+                                <strong>대표 연락처</strong><br>
+                                <span style="color: var(--text-muted); font-size: 0.9rem;">02-569-9404</span>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i data-lucide="clock"></i>
+                            <div>
+                                <strong>운영 시간</strong><br>
+                                <span style="color: var(--text-muted); font-size: 0.9rem;">평일 09:00 - 18:00 (주말 및 공휴일 휴무)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="logo">IPHUB</div>
+                <div class="footer-links">
+                    <a href="#">이용약관</a>
+                    <a href="#">개인정보처리방침</a>
+                </div>
+                <div class="social-icons">
+                    <a href="#" aria-label="LinkedIn"><i data-lucide="linkedin"></i></a>
+                    <a href="#" aria-label="Twitter"><i data-lucide="twitter"></i></a>
+                    <a href="#" aria-label="Facebook"><i data-lucide="facebook"></i></a>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; 2026 IPHUB Co., Ltd. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript 로직 -->
+    <script>
+        // [1] Lucide 아이콘 초기화
+        lucide.createIcons();
+
+        // [2] 스크롤 이벤트: Header 배경색 전환
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => {
+            // 스크롤 위치가 50px을 넘으면 scrolled 클래스 추가
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // [3] 예약 폼 제출 이벤트 처리 (브라우저 기본 경고창 대신 메시지 박스 사용)
+        const form = document.getElementById('consultationForm');
+        const successMessage = document.getElementById('successMessage');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault(); // 페이지 새로고침 방지
+
+            // 폼 데이터 초기화 및 성공 메시지 출력
+            form.reset();
+            form.style.display = 'none'; // 폼을 숨김
+            successMessage.style.display = 'block'; // 메시지 노출
+
+            // 5초 후 다시 폼을 보여주기 위한 로직 (옵션)
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+                form.style.display = 'block';
+            }, 5000);
+        });
+    </script>
+</body>
+</html>
